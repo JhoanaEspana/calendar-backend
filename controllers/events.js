@@ -1,24 +1,37 @@
 const { response } = require('express')
+const Evento = require('../models/Evento')
 
 const getEventos = async (req, res = response) => {
-  console.log(req.body)
-
   const eventos = await Evento.find().populate('user', 'name')
 
   res.json({
     ok: true,
-    msg: 'getEventos',
+    eventos,
   })
 }
 
-const crearEvento = (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: 'crearEvento',
-  })
+const crearEvento = async (req, res = response) => {
+  const evento = new Evento(req.body)
+
+  try {
+    evento.user = req.uid
+
+    const eventoDB = await evento.save()
+
+    res.json({
+      ok: true,
+      evento: eventoDB,
+    })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({
+      ok: false,
+      msg: 'Hable con el administrador',
+    })
+  }
 }
 
-const actualizarEvento = (req, res = response) => {
+const actualizarEvento = async (req, res = response) => {
   res.json({
     ok: true,
     msg: 'actualizarEvento',

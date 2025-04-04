@@ -8,6 +8,7 @@ const {
   eliminarEvento,
 } = require('../controllers/events')
 const { check } = require('express-validator')
+const { isDate } = require('../helpers/isDate')
 const router = Router()
 
 // Obtener eventos
@@ -19,7 +20,12 @@ router.get('/', getEventos)
 // crear un nuevo evento
 router.post(
   '/',
-  [check('title', 'El titulo es obligatorio').not().isEmpty(), validarCampos],
+  [
+    check('title', 'El titulo es obligatorio').not().isEmpty(),
+    check('start', 'Fecha de inicio es obligatoria').custom(isDate),
+    check('end', 'Fecha de finalizacion es obligatoria').custom(isDate),
+    validarCampos,
+  ],
   crearEvento
 )
 
